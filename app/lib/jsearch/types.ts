@@ -76,14 +76,27 @@ export interface JobDetails {
   job_max_salary: null | number;
   job_min_salary: null | number;
   job_salary_period: string | null;
-  job_highlights: any;
+  job_highlights: Partial<
+    Record<"Qualifications" | "Benefits" | "Responsibilities", string[]>
+  >;
   job_onet_soc: null | any;
   job_onet_job_zone: null | any;
   job_google_link: string;
   job_apply_link: string;
   job_apply_is_direct: boolean;
   apply_options: ApplyOption[];
-  employer_reviews: any | null;
+  employer_reviews: Review[] | null;
+  required_technologies?: string[];
+}
+
+export interface Review {
+  publisher: string;
+  employer_name: string;
+  score: number;
+  num_stars: number;
+  review_count: number;
+  max_score: number;
+  reviews_link: string;
 }
 
 export interface ApplyOption {
@@ -97,6 +110,10 @@ export interface SearchJobResponse extends BaseResponse {
     jobs: JobDetails[];
     cursor: string;
   };
+}
+
+export interface GetJobDetailsResponse extends BaseResponse {
+  data: JobDetails[];
 }
 
 export interface BaseResponse {

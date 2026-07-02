@@ -31,7 +31,7 @@ export async function getCountries(
     response_fields: "names.common,flag.emoji,codes.alpha_2",
   };
 
-  const apiKey = String(process.env.VITE_RESTCOUNTRIES_API_KEY);
+  const apiKey = String(import.meta.env.VITE_RESTCOUNTRIES_API_KEY);
 
   const response = await axios.get(
     "https://api.restcountries.com/countries/v5",

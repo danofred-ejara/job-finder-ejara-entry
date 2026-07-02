@@ -7,6 +7,8 @@ import {
   ScrollRestoration,
 } from "react-router";
 
+import { ConfigProvider, theme } from "antd";
+
 import type { Route } from "./+types/root";
 import "./bootstrap";
 
@@ -33,7 +35,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <ConfigProvider
+          theme={{ algorithm: theme.defaultAlgorithm, token: {} }}
+        >
+          {children}
+        </ConfigProvider>
         <ScrollRestoration />
         <Scripts />
       </body>

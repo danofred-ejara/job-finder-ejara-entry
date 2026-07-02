@@ -1,5 +1,6 @@
 import axios, { type AxiosInstance } from "axios";
 import type {
+  GetJobDetailsResponse,
   JobDetailsInput,
   JobSalaryInput,
   SearchJobInput,
@@ -22,12 +23,12 @@ export class Jsearch {
     });
   }
 
-  async jobSearch(params: SearchJobInput) {
+  async jobSearch(params: Partial<SearchJobInput> = {}) {
     return this.get<SearchJobResponse>("/search-v2", params);
   }
 
   async jobDetails(params: JobDetailsInput) {
-    return this.get("job-details", params);
+    return this.get<GetJobDetailsResponse>("job-details", params);
   }
 
   async jobSalary(params: JobSalaryInput) {

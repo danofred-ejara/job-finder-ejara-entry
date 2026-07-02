@@ -1,5 +1,5 @@
+import { redirect } from "react-router";
 import type { Route } from "./+types/home";
-import { Button } from "antd";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,11 +8,10 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+export async function loader() {
+  return redirect("/jobs");
+}
+
 export default function Home() {
-  return (
-    <div>
-      <h1>Home Page</h1>
-      <Button type="primary">Test Button</Button>
-    </div>
-  );
+  return <></>;
 }
