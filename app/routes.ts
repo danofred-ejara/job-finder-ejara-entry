@@ -10,5 +10,6 @@ export default [
 
   layout("./components/layouts/job-layout.tsx", [
     route("jobs", "./pages/jobs.tsx"),
+    route("about-us", "./pages/about-us.tsx"),
   ]),
 ] satisfies RouteConfig;
