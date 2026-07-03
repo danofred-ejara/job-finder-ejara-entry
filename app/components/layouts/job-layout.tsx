@@ -1,6 +1,15 @@
-import { Outlet, NavLink, useLocation } from "react-router";
-import { Layout, Menu, Typography, type MenuProps } from "antd";
+import { Outlet, NavLink, useLocation, Link } from "react-router";
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  Layout,
+  Menu,
+  Typography,
+  type MenuProps,
+} from "antd";
 import Logo from "../logo";
+import { LogoutOutlined, SettingOutlined } from "@ant-design/icons";
 
 const { Header, Footer } = Layout;
 
@@ -21,6 +30,26 @@ const menuItems: MenuItem[] = [
   },
 ];
 
+const dropdownItems: MenuItem[] = [
+  {
+    key: "name",
+    label: "John Doe",
+    disabled: true,
+  },
+  { type: "divider" },
+  {
+    key: "settings",
+    label: <Link to="/settings">Settings</Link>,
+    icon: <SettingOutlined />,
+  },
+  {
+    key: "logout",
+    label: <Link to="/api/auth/logout">Logout</Link>,
+    icon: <LogoutOutlined />,
+    danger: true,
+  },
+];
+
 export default function JobLayout() {
   const location = useLocation();
 
@@ -36,6 +65,17 @@ export default function JobLayout() {
             className="w-full flex justify-center"
           />
         </div>
+        <Dropdown
+          menu={{ items: dropdownItems }}
+          styles={{ itemContent: { width: "150px" } }}
+        >
+          <Button variant="text" type="text" className="rounded-full! p-0!">
+            <Avatar
+              size={50}
+              src="https://xsgames.co/randomusers/assets/avatars/male/1.jpg"
+            />
+          </Button>
+        </Dropdown>
       </Header>
       <Layout>
         <div className="bg-gray-200 px-4 py-6 flex-1">
