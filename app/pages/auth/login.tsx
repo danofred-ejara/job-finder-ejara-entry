@@ -1,8 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
 import { Button, Card, Divider, Form, Input, Space, Typography } from "antd";
-import { useCallback } from "react";
 import { GoogleAuthButton } from "~/components/buttons";
 import { authService } from "~/services/auth.service";
+import type { Route } from "./+types/login";
+import { requireGuess } from "~/server/auth";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  await requireGuess(request);
+}
 
 export default function Login() {
   const [form] = Form.useForm();

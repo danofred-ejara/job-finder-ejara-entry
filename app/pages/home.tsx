@@ -1,5 +1,6 @@
 import { redirect } from "react-router";
 import type { Route } from "./+types/home";
+import { requireUser } from "~/server/auth";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,7 +9,9 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export async function loader() {
+export async function loader({ request }: Route.LoaderArgs) {
+  await requireUser(request);
+
   return redirect("/jobs");
 }
 
