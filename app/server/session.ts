@@ -30,6 +30,16 @@ export async function createUserSession(token: string) {
   };
 }
 
+export async function deleteUserSession(request: Request) {
+  const session = await getSession(request.headers.get("Cookie"));
+
+  return {
+    headers: {
+      "Set-Cookie": await destroySession(session),
+    },
+  };
+}
+
 export async function getUser(request: Request): Promise<User | null> {
   const session = await getSession(request.headers.get("Cookie"));
   const cookie = session.get("session");

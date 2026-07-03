@@ -18,5 +18,8 @@ export default [
     route("about-us", "./pages/about-us.tsx"),
   ]),
 
-  ...prefix("api", [route("auth/session", "pages/api/auth/session.ts")]),
+  ...prefix("api", [
+    route("auth/session", "pages/api/auth/session.ts"),
+    route("auth/logout", "pages/api/auth/logout.ts"),
+  ]),
 ] satisfies RouteConfig;
