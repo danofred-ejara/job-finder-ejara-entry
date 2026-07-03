@@ -1,9 +1,7 @@
 import { EditOutlined } from "@ant-design/icons";
-import { Button, Card, Divider, Flex, Tag } from "antd";
+import { Button, Card, Divider, Flex, Tag, Typography } from "antd";
 
-const skills = ["JavaScript", "React", "User Interface", "Product Designer"];
-
-export default function TopSkillsCard() {
+export default function TopSkillsCard({ skills }: { skills: string[] }) {
   return (
     <Card
       className="bg-white!"
@@ -22,6 +20,12 @@ export default function TopSkillsCard() {
             </Tag>
           );
         })}
+
+        {skills.length === 0 && (
+          <Typography.Paragraph className="text-center!">
+            No Skills
+          </Typography.Paragraph>
+        )}
       </div>
     </Card>
   );

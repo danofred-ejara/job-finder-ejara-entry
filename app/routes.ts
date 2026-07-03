@@ -16,6 +16,7 @@ export default [
   layout("./components/layouts/job-layout.tsx", [
     route("jobs", "./pages/jobs.tsx"),
     route("about-us", "./pages/about-us.tsx"),
+    route("settings", "pages/settings.tsx"),
   ]),
 
   ...prefix("api", [

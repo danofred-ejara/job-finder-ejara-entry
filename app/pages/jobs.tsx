@@ -1,4 +1,6 @@
-import { Card, Layout, Space } from "antd";
+import { Layout, Space } from "antd";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router";
 import FindJobCard from "~/components/find-job-card";
 import { JobCard } from "~/components/job-cards";
 import { JobSearchFiltersCard } from "~/components/job-search-filters-card";
@@ -7,58 +9,110 @@ import { UserCard } from "~/components/user-card";
 import type { Route } from "./+types/jobs";
 import { jobService } from "~/services/job.service";
 import type { Job } from "~/types";
+import { authContext } from "~/contexts/auth";
+import { redirect } from "react-router";
 
-const { Sider, Content } = Layout;
+const { Content } = Layout;
 
-const mockedJobs = new Array(3).fill({
-  id: "test-123",
-  title: "Frontend Developer",
-  description:
-    "We are looking for a skilled frontend developer to join our team.\n\nYou will be responsible for building and maintaining our web applications.",
-  company: {
-    name: "Google",
-    logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRE_1cXg00HGctRPrZJenJP9db8aEdrNl3v2Gw5L4lrA&s",
-  },
-  deadline: new Date("2026-12-31"),
-  location: "San Francisco, CA",
-  jobType: "FULLTIME",
-  tags: ["JavaScript", "React", "TypeScript"],
-  skills: ["Frontend Development", "UI/UX Design"],
-  postedAt: new Date(),
-}) as Job[];
+export async function loader({ request, context }: Route.LoaderArgs) {
+  const { user } = context.get(authContext);
 
-export async function loader({ request }: Route.LoaderArgs) {
+  if (!user?.profile) {
+    throw redirect("/settings#account");
+  }
+
+  const url = new URL(request.url);
+  const searchParams = url.searchParams;
   const accept = request.headers.get("Accept-Language") ?? "en-US,en";
-  const [_, language, country] = accept.match(/^([a-z]+)-([A-Z]+)/) ?? [
-    "",
-    "en",
-    "US",
-  ];
+  const [_, language] = accept.match(/^([a-z]+)-([A-Z]+)/) ?? ["", "en", "US"];
 
-  // const response = await jobService.searchJob({
-  //   query: "Web developer",
-  //   country,
-  //   language,
-  // });
+  const query = searchParams.get("query") ?? user.profile.role ?? "Developer";
+  const country =
+    searchParams.get("country") ?? user.profile.country?.code ?? "US";
+  const location = searchParams.get("location") ?? undefined;
+  const employmentType = searchParams.get("employmentType") ?? undefined;
 
-  // return response.data;
+  const response = await jobService.searchJob({
+    query,
+    country,
+    // location,
+    employmentType,
+    language,
+  });
 
-  return mockedJobs;
+  return {
+    jobs: response.data,
+    user,
+    search: {
+      query,
+      country,
+      location,
+      employmentType,
+    },
+  };
 }
 
 export default function Jobs({ loaderData }: Route.ComponentProps) {
-  const jobs = loaderData;
+  const { jobs, user, search } = loaderData;
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const [searchValue, setSearchValue] = useState(search.query);
+
+  useEffect(() => {
+    setSearchValue(search.query ?? "");
+  }, [search.query]);
+
+  const filters = useMemo(
+    () => ({
+      location: search.location,
+      employmentType: search.employmentType,
+    }),
+    [search.location, search.employmentType],
+  );
+
+  const handleSearch = (query: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (query) {
+      params.set("query", query);
+    } else {
+      params.delete("query");
+    }
+    navigate({ pathname: "/jobs", search: params.toString() });
+  };
+
+  const handleFiltersChange = (values: Record<string, any>) => {
+    const params = new URLSearchParams(searchParams);
+    Object.entries(values).forEach(([key, value]) => {
+      if (
+        value == null ||
+        value === "" ||
+        (Array.isArray(value) && value.length === 0)
+      ) {
+        params.delete(key);
+      } else {
+        params.set(key, String(value));
+      }
+    });
+    navigate({ pathname: "/jobs", search: params.toString() });
+  };
 
   return (
     <Content className="flex gap-5">
       <div className="max-w-3/12 ">
         <Space orientation="vertical" className="w-full" size={20}>
-          <UserCard />
-          <TopSkillsCard />
+          <UserCard user={user} />
+          <TopSkillsCard skills={user.profile?.skills ?? []} />
         </Space>
       </div>
       <div className="flex flex-col flex-1 gap-5">
-        <FindJobCard />
+        <FindJobCard
+          value={searchValue}
+          onSearch={(value) => {
+            setSearchValue(value);
+            handleSearch(value);
+          }}
+          loading={false}
+        />
         <Space orientation="vertical" size={20}>
           {jobs.map((job, index) => (
             <JobCard job={job} key={index.toString()} />
@@ -85,7 +139,7 @@ export default function Jobs({ loaderData }: Route.ComponentProps) {
             },
             {
               label: "Job Type",
-              name: "employment_types",
+              name: "employmentType",
               type: "radio",
               options: [
                 {
@@ -103,6 +157,8 @@ export default function Jobs({ loaderData }: Route.ComponentProps) {
               ],
             },
           ]}
+          initialValues={filters}
+          onChange={handleFiltersChange}
         />
       </div>
     </Content>

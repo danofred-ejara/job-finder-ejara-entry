@@ -27,11 +27,13 @@ export type Filter = {
 
 export type JobSearchFilterCardProps = {
   filters: Filter[];
+  initialValues?: Record<string, any>;
   onChange?: (v: any) => void;
 };
 
 export function JobSearchFiltersCard({
   filters,
+  initialValues,
   onChange,
 }: JobSearchFilterCardProps) {
   const [form] = Form.useForm();
@@ -50,6 +52,7 @@ export function JobSearchFiltersCard({
       <Form
         form={form}
         layout="vertical"
+        initialValues={initialValues}
         onValuesChange={(v) => {
           onChange?.(v);
         }}

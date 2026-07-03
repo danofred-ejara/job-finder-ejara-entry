@@ -1,4 +1,4 @@
-import type { RouterContextProvider } from "react-router";
+import { type RouterContextProvider } from "react-router";
 import { authContext } from "~/contexts/auth";
 import { requireUser } from "~/server/auth";
 

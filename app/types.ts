@@ -1,6 +1,7 @@
 export interface User {
   uid: string;
   email: string;
+  imageUrl?: string;
   profile?: Profile;
 }
 
@@ -9,6 +10,7 @@ export interface Profile {
   email: string;
   role: string;
   experiencedSince: Date;
+  country: { name: string; code: string };
   skills?: string[];
   userId: string;
 }

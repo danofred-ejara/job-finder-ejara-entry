@@ -9,9 +9,14 @@ import {
   type MenuProps,
 } from "antd";
 import Logo from "../logo";
-import { LogoutOutlined, SettingOutlined } from "@ant-design/icons";
+import {
+  LogoutOutlined,
+  SettingOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import type { Route } from "./+types/job-layout";
 import { authMiddleware } from "~/middlewares/auth";
+import { authContext } from "~/contexts/auth";
 
 const { Header, Footer } = Layout;
 
@@ -32,30 +37,35 @@ const menuItems: MenuItem[] = [
   },
 ];
 
-const dropdownItems: MenuItem[] = [
-  {
-    key: "name",
-    label: "John Doe",
-    disabled: true,
-  },
-  { type: "divider" },
-  {
-    key: "settings",
-    label: <Link to="/settings">Settings</Link>,
-    icon: <SettingOutlined />,
-  },
-  {
-    key: "logout",
-    label: <Link to="/api/auth/logout">Logout</Link>,
-    icon: <LogoutOutlined />,
-    danger: true,
-  },
-];
+export async function loader({ context }: Route.LoaderArgs) {
+  return context.get(authContext);
+}
 
 export const middleware: Route.MiddlewareFunction[] = [authMiddleware];
 
-export default function JobLayout() {
+export default function JobLayout({ loaderData }: Route.ComponentProps) {
   const location = useLocation();
+  const { user } = loaderData;
+
+  const dropdownItems: MenuItem[] = [
+    {
+      key: "name",
+      label: user?.profile?.fullName,
+      disabled: true,
+    },
+    { type: "divider" },
+    {
+      key: "settings",
+      label: <Link to="/settings">Settings</Link>,
+      icon: <SettingOutlined />,
+    },
+    {
+      key: "logout",
+      label: <Link to="/api/auth/logout">Logout</Link>,
+      icon: <LogoutOutlined />,
+      danger: true,
+    },
+  ];
 
   return (
     <Layout className="min-h-screen!">
@@ -76,7 +86,8 @@ export default function JobLayout() {
           <Button variant="text" type="text" className="rounded-full! p-0!">
             <Avatar
               size={50}
-              src="https://xsgames.co/randomusers/assets/avatars/male/1.jpg"
+              src={user?.imageUrl}
+              icon={user?.imageUrl ? undefined : <UserOutlined />}
             />
           </Button>
         </Dropdown>

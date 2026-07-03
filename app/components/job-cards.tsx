@@ -16,7 +16,7 @@ export type JobCardProps = {
 export function JobCard({ job, onClick }: JobCardProps) {
   const footerItems = [
     { icon: EnvironmentOutlined, label: job.location },
-    { icon: SolutionOutlined, label: job.jobType.toLowerCase() },
+    { icon: SolutionOutlined, label: job.jobType?.toLowerCase() ?? "N/A" },
     {
       icon: ClockCircleOutlined,
       label: job.deadline

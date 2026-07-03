@@ -1,3 +1,4 @@
+import type { Timestamp } from "firebase/firestore";
 import { createCookieSessionStorage } from "react-router";
 import { auth, firestore } from "~/lib/firebase/admin";
 import type { Profile, User } from "~/types";
@@ -55,6 +56,7 @@ export async function getUser(request: Request): Promise<User | null> {
     return {
       uid: parsed.uid,
       email: String(parsed.email),
+      imageUrl: parsed.picture,
       profile: profile ?? undefined,
     };
   } catch {
@@ -63,12 +65,14 @@ export async function getUser(request: Request): Promise<User | null> {
 }
 
 export async function getUserProfile(userId: string): Promise<Profile | null> {
-  const snapshot = await firestore
-    .collection("Profiles")
-    .where("userId", "==", userId)
-    .get();
+  const profile = await firestore.collection("Profiles").doc(userId).get();
 
-  if (snapshot.empty) return null;
+  if (!profile.exists) return null;
 
-  return snapshot.docs[0]!.data() as Profile;
+  const data = profile.data() as any;
+
+  return {
+    ...data,
+    experiencedSince: (data.experiencedSince as Timestamp).toDate(),
+  } as Profile;
 }
