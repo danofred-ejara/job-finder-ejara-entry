@@ -1,11 +1,19 @@
-import { applicationDefault, initializeApp } from "firebase-admin/app";
+import { applicationDefault, initializeApp, getApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
 
-export const app = initializeApp({
-  credential: applicationDefault(),
-  projectId: process.env.VITE_FIREBASE_PROJECT_ID,
-});
+function createApp() {
+  try {
+    return getApp();
+  } catch (err) {
+    return initializeApp({
+      credential: applicationDefault(),
+      projectId: process.env.VITE_FIREBASE_PROJECT_ID,
+    });
+  }
+}
+
+export const app = createApp();
 
 export const firestore = getFirestore(app);
 
