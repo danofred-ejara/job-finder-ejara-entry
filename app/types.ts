@@ -1,8 +1,16 @@
+export interface User {
+  uid: string;
+  email: string;
+  profile?: Profile;
+}
+
 export interface Profile {
   fullName: string;
+  email: string;
   role: string;
   experiencedSince: Date;
   skills?: string[];
+  userId: string;
 }
 
 export interface SavedJob {

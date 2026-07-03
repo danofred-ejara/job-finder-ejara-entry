@@ -38,7 +38,7 @@ export class AuthService {
     const token = await credentials.user.getIdToken();
 
     try {
-      await fetch("/api/auth/login", {
+      await fetch("/api/auth/session", {
         method: "POST",
         body: new URLSearchParams({ token }),
       });
