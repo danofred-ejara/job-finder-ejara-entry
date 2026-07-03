@@ -10,6 +10,8 @@ import {
 } from "antd";
 import Logo from "../logo";
 import { LogoutOutlined, SettingOutlined } from "@ant-design/icons";
+import type { Route } from "./+types/job-layout";
+import { authMiddleware } from "~/middlewares/auth";
 
 const { Header, Footer } = Layout;
 
@@ -49,6 +51,8 @@ const dropdownItems: MenuItem[] = [
     danger: true,
   },
 ];
+
+export const middleware: Route.MiddlewareFunction[] = [authMiddleware];
 
 export default function JobLayout() {
   const location = useLocation();

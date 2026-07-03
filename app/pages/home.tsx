@@ -9,9 +9,7 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export async function loader({ request }: Route.LoaderArgs) {
-  await requireUser(request);
-
+export async function loader() {
   return redirect("/jobs");
 }
 
